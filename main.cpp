@@ -13,7 +13,20 @@ float GetScaleFactor(){
     float scaleFactorY = GetScreenHeight() / screenHeight;
     return (scaleFactorX < scaleFactorY) ? scaleFactorX : scaleFactorY;
 }
+bool IsPointInCircle(Vector2 point, Vector2 center, float radius){
+    float dx = point.x - center.x;
+    float dy = point.y - center.y;
+    return (dx * dx + dy * dy) <= (radius * radius);
+}
 
+void DrawCircleRectIntersection(Rectangle rect, Vector2 circleCenter, float radius, Color clr){
+    for (int y = (int)rect.y; y < (int)(rect.y + rect.height); y++)
+        for (int x = (int)rect.x; x < (int)(rect.x + rect.width); x++){
+            Vector2 point = { (float)x, (float)y };
+            if (IsPointInCircle(point, circleCenter, radius))
+                DrawPixel(x, y, clr); 
+        }
+}
 class TypeColors{
     public:
     Color Red = Color({173, 42, 42, 255}), Green = Color({27, 125, 25,255}), Yellow = Color({173, 165, 42, 255});
@@ -77,18 +90,18 @@ class Variable{
         if(CheckCollisionPointRec(mousePos, box)){
             float scaleFactor = GetScaleFactor();
             int ffontSize = int (float(15)*(scaleFactor));
-            float width = 140*scaleFactor + propertyTextWidth() - MeasureText("abcdef", ffontSize), height = 220*scaleFactor, ypos = mousePos.y - (((GetScreenHeight()-mousePos.y)<height)?height-(GetScreenHeight()-mousePos.y):0);
+            float width = 140*scaleFactor + (propertyTextWidth() - MeasureText("abcdef", ffontSize)*scaleFactor), height = 220*scaleFactor, ypos = mousePos.y - (((GetScreenHeight()-mousePos.y)<height)?height-(GetScreenHeight()-mousePos.y):0);
             string yes="Yes",no="No";
-            DrawRectangleRounded({mousePos.x+5, ypos,width,height},0.2,10,colors[type]);
+            // DrawRectangleRounded({mousePos.x+5, ypos,width,height},0.2,10,colors[type]);
             DrawRectangleRounded({mousePos.x, ypos,width,height},0.2,10,DARKGRAY);
-            DrawCircle(mousePos.x+width/2, ypos+20, 100, colors[type]);
-            DrawText(("Type: "+type).c_str(), mousePos.x+10, ypos+10, ffontSize, WHITE);
-            DrawText(("Name: "+name).c_str(), mousePos.x+10, ypos+30, ffontSize, WHITE);
-            DrawText(("Value: "+value).c_str(), mousePos.x+10, ypos+50, ffontSize, WHITE);
-            DrawText(("In Function: "+relatedFunction).c_str(), mousePos.x+10, ypos+70, ffontSize, WHITE);
-            DrawText(("Const: "+((isConst)?yes:no)).c_str(), mousePos.x+10, ypos+90, ffontSize, WHITE);
-            DrawText(("Global: "+((isGlobal)?yes:no)).c_str(), mousePos.x+10, ypos+110, ffontSize, WHITE);
-            DrawText(("Row No: "+to_string(rowNo)).c_str(), mousePos.x+10, ypos+130, ffontSize, WHITE);
+            DrawCircleRectIntersection({mousePos.x, ypos+scaleFactor,width,height}, {mousePos.x+width/2, ypos+20},100*scaleFactor,colors[type]);
+            DrawText(("Type: "+type).c_str(), mousePos.x+10, ypos+(10*scaleFactor), ffontSize, WHITE);
+            DrawText(("Name: "+name).c_str(), mousePos.x+10, ypos+(30*scaleFactor), ffontSize, WHITE);
+            DrawText(("Value: "+value).c_str(), mousePos.x+10, ypos+(50*scaleFactor), ffontSize, WHITE);
+            DrawText(("In Function: "+relatedFunction).c_str(), mousePos.x+10, ypos+(70*scaleFactor), ffontSize, WHITE);
+            DrawText(("Const: "+((isConst)?yes:no)).c_str(), mousePos.x+10, ypos+(90*scaleFactor), ffontSize, WHITE);
+            DrawText(("Global: "+((isGlobal)?yes:no)).c_str(), mousePos.x+10, ypos+(110*scaleFactor), ffontSize, WHITE);
+            DrawText(("Row No: "+to_string(rowNo)).c_str(), mousePos.x+10, ypos+(130*scaleFactor), ffontSize, WHITE);
         }
     }
 };

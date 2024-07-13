@@ -5,8 +5,21 @@ using namespace std;
 
 const int screenWidth = 800;
 const int screenHeight = 450;
-struct TypeColors{
-    Color type_int = GREEN, type_char = RED, type_float = ORANGE, type_string = BLUE, type_double = PURPLE, type_vector = YELLOW;
+void doNothing(){}
+class TypeColors{
+    map<string, Color> properties;
+    public:
+    TypeColors(){
+        properties["type_int"] = GREEN;
+        properties["type_char"] = RED;
+        properties["type_float"] = ORANGE;
+        properties["type_string"] = BLUE;
+        properties["type_double"] = PURPLE;
+        properties["type_vector"] = YELLOW;
+    }
+    Color& operator[](const std::string& key) {
+        return properties[key];
+    }
 };
 class Variable{
     const string type, name;
@@ -20,6 +33,11 @@ class Variable{
     void setValue(const string val){value = val;}
 
     void draw(){
+        float width = 100.0f, height = 100.0f;
+        DrawRectangleRounded({15.0f,40.0f+((rowNo-1)*(height)),width, height},0.2,0,GRAY);
+        DrawText(name.c_str(), 15.0f + width/2, (40.0f+height/2)+((rowNo-1)*height), 20, WHITE);
+        DrawCircle(width-10.0f,40.0f+10.0f+((rowNo-1)*height),5,colors[type]);
+        isConst?DrawCircle(width+2.0f,40.0f+10.0f+((rowNo-1)*height),5,RED):doNothing();
     }
 
 };
@@ -44,9 +62,12 @@ int main() {
     while (!WindowShouldClose()) { 
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
-
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        ClearBackground(BLACK);
+        Variable v1("type_int", "i", "12", true,false, 1);
+        Variable v2("type_char", "i", "12", true,false, 2);
+        v1.draw();
+        v2.draw();
+        // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 
         EndDrawing();
     }

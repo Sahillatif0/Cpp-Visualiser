@@ -1,16 +1,16 @@
 #include <bits/stdc++.h>
 #include "raylib.h"
-
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
 using namespace std;
 
 const int screenWidth = 800;
 const int screenHeight = 450;
 void doNothing(){}
 
-float GetScaleFactor(int currentWidth, int currentHeight)
-{
-    float scaleFactorX = (float)currentWidth / screenWidth;
-    float scaleFactorY = (float)currentHeight / screenHeight;
+float GetScaleFactor(){
+    float scaleFactorX = GetScreenWidth() / screenWidth;
+    float scaleFactorY = GetScreenHeight() / screenHeight;
     return (scaleFactorX < scaleFactorY) ? scaleFactorX : scaleFactorY;
 }
 
@@ -40,11 +40,13 @@ class Variable{
     Variable(string type, string name, string value, bool isConst, bool hasValue, bool isGlobal, int rowNo) : type(type), name(name), value(value), isConst(isConst), hasValue(hasValue), isGlobal(isGlobal), rowNo(rowNo) {}
     void setValue(const string val) { value = val; }
     void draw(){
-        float width = 100.0f, height = 100.0f;
-        DrawRectangleRounded({15.0f,40.0f+((rowNo-1)*(height)),width, height},0.2,0,GRAY);
-        DrawText(name.c_str(), 15.0f + width/2, (40.0f+height/2)+((rowNo-1)*height), 20, WHITE);
-        DrawCircle(width-10.0f,40.0f+10.0f+((rowNo-1)*height),5,colors[type]);
-        isConst?DrawCircle(width+2.0f,40.0f+10.0f+((rowNo-1)*height),5,RED):doNothing();
+        int circle_no = 0;
+        float scaleFactor = GetScaleFactor();
+        float width = 100.0f*scaleFactor, height = 40.0f*scaleFactor, initialPosx = 15.0f*scaleFactor, initialPosy = 30.0f*scaleFactor;
+        DrawRectangleRounded({initialPosx,initialPosy+((rowNo-1)*(height + height/10)),width, height},0.2,0,GRAY);
+        DrawText(name.c_str(), initialPosx + width/2, (initialPosy+height/2)+((rowNo-1)*height), 20, WHITE);
+        DrawCircle(width+5-(12.0f*scaleFactor*circle_no),initialPosy+(10.0f*scaleFactor)+height/10+((rowNo-1)*height),5*scaleFactor,colors[type]), circle_no++;
+        if(isConst)DrawCircle(width+5-(12.0f*scaleFactor*circle_no),initialPosy+(10.0f*scaleFactor)+height/10+((rowNo-1)*height),5*scaleFactor,RED), circle_no++;
     }
 };
 class Function{
@@ -58,7 +60,6 @@ class Class{
 
 class Structure{
 };
-
 int main(){
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
@@ -68,11 +69,7 @@ int main(){
 
     while (!WindowShouldClose())
     {
-        int currentWidth = GetScreenWidth();
-        int currentHeight = GetScreenHeight();
-
-        float scaleFactor = GetScaleFactor(currentWidth, currentHeight);
-
+        float scaleFactor = GetScaleFactor();
         BeginDrawing();
         ClearBackground(BLACK);
         Variable v1("type_int", "i", "12", true,false, 1);

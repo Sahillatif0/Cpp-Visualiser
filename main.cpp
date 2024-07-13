@@ -90,7 +90,7 @@ class Variable{
         if(CheckCollisionPointRec(mousePos, box)){
             float scaleFactor = GetScaleFactor();
             int ffontSize = int (float(15)*(scaleFactor));
-            float width = 140*scaleFactor + (propertyTextWidth() - MeasureText("abcdef", ffontSize)*scaleFactor), height = 220*scaleFactor, ypos = mousePos.y - (((GetScreenHeight()-mousePos.y)<height)?height-(GetScreenHeight()-mousePos.y):0);
+            float width = 140*scaleFactor + (propertyTextWidth() - MeasureText("abcdef", ffontSize))*scaleFactor, height = 220*scaleFactor, ypos = mousePos.y - (((GetScreenHeight()-mousePos.y)<height)?height-(GetScreenHeight()-mousePos.y):0);
             string yes="Yes",no="No";
             // DrawRectangleRounded({mousePos.x+5, ypos,width,height},0.2,10,colors[type]);
             DrawRectangleRounded({mousePos.x, ypos,width,height},0.2,10,DARKGRAY);
